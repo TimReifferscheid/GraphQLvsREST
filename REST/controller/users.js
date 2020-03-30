@@ -90,12 +90,6 @@ exports.login = (req, res, next) => {
         userId: loadedUser._id.toString(),
         message: "login succesful!",
         actions: {
-          getUsers: {
-            href: "http://localhost:8080/users",
-            rel: "users",
-            method: "GET",
-            description: "list all registred users"
-          },
           getPosts: {
             href: "http://localhost:8080/posts",
             rel: "posts",
@@ -107,12 +101,6 @@ exports.login = (req, res, next) => {
             rel: "posts",
             method: "POST",
             description: "Write a post"
-          },
-          getMyPosts: {
-            href: "http://localhost:8080/posts/{id}/posts ",
-            rel: "posts",
-            method: "GET",
-            description: "lists written posts"
           },
           welcome: {
             href: "http://localhost:8080/welcome",

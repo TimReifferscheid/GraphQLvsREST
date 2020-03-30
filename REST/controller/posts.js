@@ -2,12 +2,16 @@
 const Post = require("./../models/post");
 const User = require("./../models/user");
 
-
 // GET /posts
 exports.getPosts = (req, res, next) => {
   Post.find()
     .then(posts => {
-      res.status(200).json({ message: "fetched posts", posts: posts });
+      res.status(200).json({
+        message: "fetched posts",
+        posts: posts.map(post => {
+          return post.set("href", "http://localhost:8080/posts/" + post._id);
+        })
+      });
     })
     .catch(err => {
       if (!err.statusCode) {
@@ -16,7 +20,6 @@ exports.getPosts = (req, res, next) => {
       next(err);
     });
 };
-
 // POST /posts
 exports.createPost = (req, res, next) => {
   User.findById(req.userId).then(user => {
@@ -46,7 +49,33 @@ exports.createPost = (req, res, next) => {
       .then(result => {
         res.status(201).json({
           message: "Post created successfully!",
-          post: post
+          post: post,
+          actions: {
+            read: {
+              href: "http://localhost:8080/posts/" + post._id,
+              rel: "read",
+              method: "GET",
+              description: "Read existing post"
+            },
+            update: {
+              href: "http://localhost:8080/posts/" + post._id,
+              rel: "update",
+              method: "PUT",
+              description: "Update existing post"
+            },
+            delete: {
+              href: "http://localhost:8080/posts/" + post._id,
+              rel: "delete",
+              method: "DELETE",
+              description: "Delete existing post"
+            },
+            getPosts: {
+              href: "http://localhost:8080/posts",
+              rel: "read",
+              method: "GET",
+              description: "Get all posts"
+            }
+          }
         });
       })
       .catch(err => {
@@ -68,7 +97,36 @@ exports.getPost = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
-      res.status(200).json({ message: "post fetched", post: post });
+      res.status(200).json({
+        message: "post fetched",
+        post: post,
+        actions: {
+          create: {
+            href: "http://localhost:8080/posts/",
+            rel: "create",
+            method: "POST",
+            description: "Read existing post"
+          },
+          update: {
+            href: "http://localhost:8080/posts/" + post._id,
+            rel: "update",
+            method: "PUT",
+            description: "Update existing post"
+          },
+          delete: {
+            href: "http://localhost:8080/posts/" + post._id,
+            rel: "delete",
+            method: "DELETE",
+            description: "Delete existing post"
+          },
+          getPosts: {
+            href: "http://localhost:8080/posts",
+            rel: "read",
+            method: "GET",
+            description: "Get all posts"
+          }
+        }
+      });
     })
     .catch(err => {
       if (!err.statusCode) {
@@ -115,7 +173,7 @@ exports.deletePost = (req, res, next) => {
         const error = new Error("not found");
         error.statusCode = 404;
         throw error;
-      }      
+      }
       return Post.findByIdAndRemove(postId);
     })
     .then(result => {
