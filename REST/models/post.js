@@ -6,18 +6,12 @@ const postSchema = new Schema(
     title: { type: String, required: true },
     content: { type: String, required: true },
     creator: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true
-    },
-    comments: {
-      comment: { type: String },
-      creator: {
+      _id: {
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true
       },
-      timestamps: true
+      name: { type: String, required: true }
     }
   },
   { timestamps: true }

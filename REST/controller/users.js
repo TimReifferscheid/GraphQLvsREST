@@ -32,7 +32,21 @@ exports.signup = (req, res, next) => {
       console.log("user with ID:" + result._id + " was created!");
       res.status(201).json({
         message: "Succesful created",
-        userId: result._id
+        userId: result._id,
+        actions: {
+          login: {
+            href: "http://localhost:8080/users/login",
+            rel: "login",
+            method: "POST",
+            description: "login to existing account"
+          },
+          welcome: {
+            href: "http://localhost:8080/welcome",
+            rel: "Welcome-Page",
+            method: "GET",
+            description: "go back to welcome page"
+          }
+        }
       });
     })
     .catch(err => {
@@ -74,7 +88,39 @@ exports.login = (req, res, next) => {
       res.status(200).json({
         token: token,
         userId: loadedUser._id.toString(),
-        message: "login succesful!"
+        message: "login succesful!",
+        actions: {
+          getUsers: {
+            href: "http://localhost:8080/users",
+            rel: "users",
+            method: "GET",
+            description: "list all registred users"
+          },
+          getPosts: {
+            href: "http://localhost:8080/posts",
+            rel: "posts",
+            method: "GET",
+            description: "list all existing posts"
+          },
+          createPost: {
+            href: "http://localhost:8080/posts",
+            rel: "posts",
+            method: "POST",
+            description: "Write a post"
+          },
+          getMyPosts: {
+            href: "http://localhost:8080/posts/{id}/posts ",
+            rel: "posts",
+            method: "GET",
+            description: "lists written posts"
+          },
+          welcome: {
+            href: "http://localhost:8080/welcome",
+            rel: "Welcome-Page",
+            method: "GET",
+            description: "go back to welcome page"
+          }
+        }
       });
     })
     .catch(err => {

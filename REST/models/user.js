@@ -10,16 +10,6 @@ const userSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "Post"
     }
-  ],
-  guestBook: [
-    {
-      comment: { type: String },
-      creator: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true
-      }
-    }
   ]
 });
 module.exports = mongoose.model("User", userSchema);

@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 
 // internal paths
 const userRoutes = require("./routes/users");
+const postRoutes = require("./routes/posts")
 const config = require("./config.json");
 
 const app = express();
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/users", userRoutes);
+app.use("/posts", postRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
