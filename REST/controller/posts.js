@@ -105,7 +105,7 @@ exports.getPost = (req, res, next) => {
             href: "http://localhost:8080/posts/",
             rel: "create",
             method: "POST",
-            description: "Read existing post"
+            description: "Create a new post"
           },
           update: {
             href: "http://localhost:8080/posts/" + post._id,
@@ -151,10 +151,40 @@ exports.updatePost = (req, res, next) => {
       }
       post.title = title;
       post.content = content;
+      post.updatedAt = Date.now();
       return post.save();
     })
     .then(result => {
-      res.status(200).json({ message: "post updated", post: result });
+      res.status(200).json({
+        message: "post updated",
+        post: result,
+        actions: {
+          create: {
+            href: "http://localhost:8080/posts/",
+            rel: "create",
+            method: "POST",
+            description: "Create a new post"
+          },
+          read: {
+            href: "http://localhost:8080/posts/" + postId,
+            rel: "read",
+            method: "GET",
+            description: "Read existing post"
+          },
+          delete: {
+            href: "http://localhost:8080/posts/" + postId,
+            rel: "delete",
+            method: "DELETE",
+            description: "Delete existing post"
+          },
+          getPosts: {
+            href: "http://localhost:8080/posts",
+            rel: "read",
+            method: "GET",
+            description: "Get all posts"
+          }
+        }
+      });
     })
     .catch(err => {
       if (!err.statusCode) {
@@ -178,7 +208,23 @@ exports.deletePost = (req, res, next) => {
     })
     .then(result => {
       console.log("Post deleted!");
-      res.status(200).json({ message: "post deleted" });
+      res.status(200).json({
+        message: "post deleted",
+        actions: {
+          create: {
+            href: "http://localhost:8080/posts/",
+            rel: "create",
+            method: "POST",
+            description: "Create a new post"
+          },
+          getPosts: {
+            href: "http://localhost:8080/posts",
+            rel: "read",
+            method: "GET",
+            description: "Get all posts"
+          }
+        }
+      });
     })
     .catch(err => {
       if (!err.statusCode) {
