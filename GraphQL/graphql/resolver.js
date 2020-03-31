@@ -52,85 +52,85 @@ exports.signUp = ({ userInput }, req) => {
   });
 };
 
-exports.login = ({ email, password }, req) => {
-  User.findOne({ email: email })
-    .then(user => {
-      if (!user) {
-        const error = new Error("user not found!");
-        error.code = 401;
-        throw error;
-      } else {
-        bcrypt.compare(password, User.password);
-        if (!isEqual) {
-          const error = new Error("Wrong password!");
-          error.code = 401;
-          throw error;
-        }
-        const token = jwt.sign(
-          {
-            email: user.email,
-            userId: user._id.toString()
-          },
-          config.secretKey,
-          { expiresIn: "1h" }
-        );
-        return {
-          token: token,
-          userId: user._id.toString(),
-          message: "login succesful!"
-        };
-      }
-    })
-    .catch(error => {
-      if (!error.statusCode) {
-        error.data = errors; //add field assign errors array
-        error.code = 500;
-      }
-      next(err);
-    });
-};
+// exports.login = ({ email, password }, req) => {
+//   User.findOne({ email: email })
+//     .then(user => {
+//       if (!user) {
+//         const error = new Error("user not found!");
+//         error.code = 401;
+//         throw error;
+//       } else {
+//         bcrypt.compare(password, User.password);
+//         if (!isEqual) {
+//           const error = new Error("Wrong password!");
+//           error.code = 401;
+//           throw error;
+//         }
+//         const token = jwt.sign(
+//           {
+//             email: user.email,
+//             userId: user._id.toString()
+//           },
+//           config.secretKey,
+//           { expiresIn: "1h" }
+//         );
+//         return {
+//           token: token,
+//           userId: user._id.toString(),
+//           message: "login succesful!"
+//         };
+//       }
+//     })
+//     .catch(error => {
+//       if (!error.statusCode) {
+//         error.data = errors; //add field assign errors array
+//         error.code = 500;
+//       }
+//       next(err);
+//     });
+// };
 
-module.createPost = ({ postInput }, req) => {
-  if (!req.isAuth) {
-    const error = new Error("not authenticated");
-    error.code = 401;
-    throw error;
-  }
-  const errors = [];
-  User.findById(req.userId).then(user => {
-    if (!user) {
-      const error = new Error("User not found!");
-      error.statusCode = 401;
-      throw error;
-    }
+// module.createPost = ({ postInput }, req) => {
+//   if (!req.isAuth) {
+//     const error = new Error("not authenticated");
+//     error.code = 401;
+//     throw error;
+//   }
+//   const errors = [];
+//   User.findById(req.userId).then(user => {
+//     if (!user) {
+//       const error = new Error("User not found!");
+//       error.statusCode = 401;
+//       throw error;
+//     }
 
-    const post = new Post({
-      title: postInput.title,
-      content: postInput.content,
-      creator: { _id: req.userId, name: user.name } //reference to the user
-    });
-    post
-      .save()
-      .then(result => {
-        return User.findById(req.userId);
-      })
-      .then(user => {
-        creator = user;
-        user.posts.push(post);
-        return user.save();
-      })
-      .catch(error => {
-        if (!error.statusCode) {
-          error.data = errors; //add field assign errors array
-          error.code = 500;
-        }
-        next(err);
-      });
-    return {
-      ...createdPost._doc,
-      _id: createdPost._id.toString(),
-      createdAt: createdPost.createdAt.toISOString(),
-      updatedAt: createdPost.updatedAt.toISOString()
-    };
-  });
-};
+//     const post = new Post({
+//       title: postInput.title,
+//       content: postInput.content,
+//       creator: { _id: req.userId, name: user.name } //reference to the user
+//     });
+//     post
+//       .save()
+//       .then(result => {
+//         return User.findById(req.userId);
+//       })
+//       .then(user => {
+//         creator = user;
+//         user.posts.push(post);
+//         return user.save();
+//       })
+//       .catch(error => {
+//         if (!error.statusCode) {
+//           error.data = errors; //add field assign errors array
+//           error.code = 500;
+//         }
+//         next(err);
+//       });
+//     return {
+//       ...createdPost._doc,
+//       _id: createdPost._id.toString(),
+//       createdAt: createdPost.createdAt.toISOString(),
+//       updatedAt: createdPost.updatedAt.toISOString()
+//     };
+//   });
+// };

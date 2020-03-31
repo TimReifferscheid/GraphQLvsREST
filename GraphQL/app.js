@@ -12,8 +12,7 @@ const config = require("./config.json");
 
 const app = express();
 
-
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -28,7 +27,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(auth);
+//app.use(auth);
 
 app.use(
   "/graphql",
@@ -36,7 +35,7 @@ app.use(
     schema: graphqlSchema,
     rootValue: graphqlResolver,
     graphiql: true,
-    formatError(err) {
+    customFormatErrorFn(err) {
       if (!err.originalError) {
         return err;
       }
