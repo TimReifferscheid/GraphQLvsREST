@@ -1,6 +1,6 @@
 # SimpleNetwork
 
-This repository contains two different approaches for a very simplified version of a social network api.
+This repository contains two different approaches for a very simplified version of a social network api built in Node.js and Express.
 
 ## Features
 

@@ -22,19 +22,23 @@ exports.getPosts = (req, res, next) => {
 };
 // POST /posts
 exports.createPost = (req, res, next) => {
+  console.log(req.userId);
   User.findById(req.userId).then(user => {
+    console.log("check1");
+    console.log(user);
     if (!user) {
       const error = new Error("User not found!");
       error.statusCode = 401;
       throw error;
     }
+    console.log("check2");
     const title = req.body.title;
     const content = req.body.content;
 
     const post = new Post({
       title: title,
       content: content,
-      creator: { _id: req.body.userId, name: user.name }
+      creator: { _id: req.userId, name: user.name }
     });
     post
       .save()
