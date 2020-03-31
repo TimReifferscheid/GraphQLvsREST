@@ -34,7 +34,8 @@ exports.signUp = ({ userInput }, req) => {
           const user = new User({
             email: userInput.email,
             name: userInput.name,
-            password: hashedPW
+            password: hashedPW,
+            posts: []
           });
           return user.save();
         })
@@ -79,13 +80,12 @@ exports.login = ({ email, password }, req) => {
   });
 };
 
-module.createPost = ({ postInput }, req) => {
-  console.log("TEST!");
-  // if (!req.isAuth) {
-  //   const error = new Error("not authenticated");
-  //   error.code = 401;
-  //   throw error;
-  // }
+exports.createPost = ({ postInput }, req) => {
+  if (!req.isAuth) {
+    const error = new Error("not authenticated");
+    error.code = 401;
+    throw error;
+  }
   const errors = [];
   return User.findById(req.userId).then(user => {
     if (!user) {
@@ -101,18 +101,22 @@ module.createPost = ({ postInput }, req) => {
     return post
       .save()
       .then(result => {
-        return {
-          user: User.findById(req.userId),
+        return User.findById(req.userId).then(user => ({
+          user: user,
           createdPost: result
-        };
+        }));
       })
       .then(({ user, createdPost }) => {
+        //console.log(user);
         user.posts.push(createdPost);
-        return { result: user.save(), createdPost };
+        return user.save().then(result => ({
+          result: result,
+          createdPost
+        }));
       })
       .then(({ result, createdPost }) => {
         return {
-          ...post,
+          ...post._doc,
           _id: createdPost._id.toString(),
           createdAt: createdPost.createdAt.toISOString(),
           updatedAt: createdPost.updatedAt.toISOString()
@@ -121,7 +125,7 @@ module.createPost = ({ postInput }, req) => {
   });
 };
 
-module.getPost = ({ id }, req) => {
+exports.getPost = ({ id }, req) => {
   return Post.findById(id).then(post => {
     if (!post) {
       const error = new Error("not found");
@@ -129,12 +133,12 @@ module.getPost = ({ id }, req) => {
       throw error;
     }
     return {
-      ...post
+      ...post._doc
     };
   });
 };
 
-module.updatePost = ({ id, postInput }, req) => {
+exports.updatePost = ({ id, postInput }, req) => {
   const title = postInput.title;
   const content = postInput.content;
   return Post.findById(id)
@@ -151,12 +155,12 @@ module.updatePost = ({ id, postInput }, req) => {
     })
     .then(result => {
       return {
-        ...result
+        ...result._doc
       };
     });
 };
 
-module.deletePost = ({ id }, req) => {
+exports.deletePost = ({ id }, req) => {
   return Post.findById(id)
     .then(post => {
       if (!post) {
@@ -169,4 +173,13 @@ module.deletePost = ({ id }, req) => {
     .then(result => {
       return true;
     });
+};
+
+exports.getPosts = (_, req) => {
+  if (!req.isAuth) {
+    const error = new Error("not authenticated");
+    error.code = 401;
+    throw error;
+  }
+  return Post.find();
 };
