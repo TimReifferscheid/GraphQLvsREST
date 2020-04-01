@@ -125,7 +125,7 @@ exports.createPost = ({ postInput }, req) => {
   });
 };
 
-exports.getPost = ({ id }, req) => {
+exports.post = ({ id }, req) => {
   return Post.findById(id).then(post => {
     if (!post) {
       const error = new Error("not found");
@@ -175,11 +175,12 @@ exports.deletePost = ({ id }, req) => {
     });
 };
 
-exports.getPosts = (_, req) => {
+exports.posts = ({}, req) => {
   if (!req.isAuth) {
     const error = new Error("not authenticated");
     error.code = 401;
     throw error;
   }
+
   return Post.find();
 };
